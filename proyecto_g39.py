@@ -7,12 +7,7 @@ from gurobipy import GRB
 # ---------------------------------------------------------------
 # Cargamos todos los datos desde data_inputs.py
 # ---------------------------------------------------------------
-from data_inputs import (
-    Z, D, Hn, B, W, S, Dproh, sigma_d, sigma_w, W_w,
-    calle, parque, privado, vert, gris, tau,
-    A_pot, A_gris, f, r_parque, Vmin,
-    beta_i, c_pot, c_gris, lam, M
-)
+from dataset import *
 
 # ----------------------------------------------------------------
 # 3) MODELO
