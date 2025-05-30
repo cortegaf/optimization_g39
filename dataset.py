@@ -75,12 +75,15 @@ _build_calendar()
 #    * area: superficie en m²
 #    * beta_i: volumen de lavado en m³/evento
 # ----------------------------------------------------------------------------
-Z                      : List[int]            = []   # Lista de UGAs
-calle, parque, privado : Dict[int, int]       = {}   # Atributos binarios
-vert, gris             : Dict[int, int]       = {}   # Atributos binarios
-tau                    : Dict[int, int]       = {}   # Tipo de vegetación
-area                   : Dict[int, float]     = {}   # Superficie (m²)
-beta_i                 : Dict[int, float]     = {}   # Volumen lavado (m³)
+Z: List[int] = []   # Lista de UGAs
+calle: Dict[int, int] = {}   # Atributos binarios
+parque: Dict[int, int] = {}   # Atributos binarios
+privado: Dict[int, int] = {}   # Atributos binarios
+vert: Dict[int, int] = {}   # Atributos binarios
+gris: Dict[int, int] = {}   # Atributos binarios
+tau: Dict[int, int] = {}   # Tipo de vegetación
+area: Dict[int, float] = {}   # Superficie (m²)
+beta_i: Dict[int, float] = {}   # Volumen lavado (m³)
 
 # ----------------------------------------------------------------------------
 # 3) PARÁMETROS HIDROLÓGICOS Y ECONÓMICOS
