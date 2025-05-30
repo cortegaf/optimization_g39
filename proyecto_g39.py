@@ -1,40 +1,39 @@
-# ================================================================
-#  Modelo municipal de riego + lavado (Gurobi 10.0.3)
-# ================================================================
 import gurobipy as gp
 from gurobipy import GRB
 
-# ---------------------------------------------------------------
-# Cargamos todos los datos desde data_inputs.py
-# ---------------------------------------------------------------
 from dataset import *
-
-# ----------------------------------------------------------------
-# 3) MODELO
-# ----------------------------------------------------------------
 m = gp.Model('Municipal_Riego_10_0')
 
 # ------------------------- VARIABLES ----------------------------
+# x[i,d,h]: Riego nocturno en UGA i, día d, hora h
 x = m.addVars( [(i,d,h) for i in Z for d in D for h in Hn if calle[i]==0],
                vtype=GRB.BINARY, name='x')
 
-qpot  = m.addVars(x.keys(),            lb=0.0, name='qpot')
-qgris = m.addVars(x.keys(),            lb=0.0, name='qgris')
+# Caudales de riego nocturno (agua potable y gris)
+qpot  = m.addVars(x.keys(), lb=0.0, name='qpot')
+qgris = m.addVars(x.keys(), lb=0.0, name='qgris')
 
+# X[i,d,b]: Riego diurno en UGA i, día d, bloque b
 X = m.addVars( [(i,d,b) for i in Z for d in D for b in B if calle[i]==0],
                vtype=GRB.BINARY, name='X')
 
-Qpot  = m.addVars(X.keys(),            lb=0.0, name='Qpot')
-Qgris = m.addVars(X.keys(),            lb=0.0, name='Qgris')
+# Caudales de riego diurno (agua potable y gris)
+Qpot  = m.addVars(X.keys(), lb=0.0, name='Qpot')
+Qgris = m.addVars(X.keys(), lb=0.0, name='Qgris')
 
-y   = m.addVars( [(i,d)   for i in Z for d in D], vtype=GRB.BINARY, name='y')
-vlav= m.addVars( [(i,d)   for i in Z if calle[i]==1 for d in D],
+# y[i,d]: Actividad en UGA i, día d
+y   = m.addVars( [(i,d) for i in Z for d in D], vtype=GRB.BINARY, name='y')
+
+# vlav[i,d]: Volumen de lavado en UGA i, día d
+vlav = m.addVars( [(i,d) for i in Z if calle[i]==1 for d in D],
                   lb=0.0, name='vlav')
 
-nweek= m.addVars( [(i,w)  for i in Z if calle[i]==0 for w in W],
+# nweek[i,w]: Número de riegos en UGA i, semana w
+nweek = m.addVars( [(i,w) for i in Z if calle[i]==0 for w in W],
                   vtype=GRB.INTEGER, lb=0, name='n')
 
-sweek= m.addVars( [(i,w)  for i in Z if calle[i]==0 for w in W],
+# sweek[i,w]: Déficit de volumen en UGA i, semana w
+sweek = m.addVars( [(i,w) for i in Z if calle[i]==0 for w in W],
                   lb=0.0, name='s')
 
 # --------------------- RESTRICCIONES ----------------------------
@@ -157,20 +156,13 @@ cost_riego = c_pot * gp.quicksum(qpot.values()) + \
              c_pot * gp.quicksum(Qpot.values()) + \
              c_gris * gp.quicksum(Qgris.values())
 
-# Opción 1 — factor común
 cost_lav = c_pot * gp.quicksum(vlav.values())
 penal_def = lam * gp.quicksum(sweek.values())
 
 m.setObjective( cost_riego + cost_lav + penal_def, GRB.MINIMIZE)
 
-# ----------------------------------------------------------------
-# 4) OPTIMIZACIÓN
-# ----------------------------------------------------------------
 m.Params.OutputFlag = 1             # 0 para silencio
 m.optimize()
 
-# ----------------------------------------------------------------
-# 5) RESULTADOS BÁSICOS (ejemplo)
-# ----------------------------------------------------------------
 if m.Status == GRB.OPTIMAL:
     print(f"Costo óptimo = {m.ObjVal:,.2f} $/año")

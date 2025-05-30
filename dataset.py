@@ -43,7 +43,7 @@ W_w       : Dict[int, List[int]]   = defaultdict(list)
 Dproh     : List[int]              = []        # miércoles / domingos
 
 def _build_calendar(year: int = 2025) -> None:
-    """Llena σd, σw, Ww y Dproh de forma consistente."""
+    """Llena sigma_d, sigmaw, Ww y Dproh de forma consistente."""
     cal = calendar.Calendar()
     d_counter = 0
     for m in S:
