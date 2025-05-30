@@ -1,16 +1,3 @@
-# ---------------------------------------------------------------------------
-# dataset.py
-# ---------------------------------------------------------------------------
-"""
-Archivo de datos de entrada para el modelo de riego/lavado municipal.
-
-1.  Mantiene los nombres de conjuntos, parámetros y estructuras que espera `proyecto_g39.py`.
-2.  Las tablas deben rellenarse con datos reales (catastros SIG, inventario de parques, 
-    tarifas oficiales, etc.).
-
-Cada bloque va acompañado de un comentario que explica dónde buscar la información real
-y el formato esperado.
-"""
 
 # ---------------------------------------------------------------------------
 # 0) LIBRERÍAS
