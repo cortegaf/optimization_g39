@@ -103,12 +103,65 @@ def build_ugas(place="Las Condes, Santiago Metropolitan Region, Chile"):
 
     return Z, calle, parque, privado, vert, gris, tau, area, beta_i
 
+def build_hidro_eco():
+    A_pot  : Dict[int, float]          = {}   # Dotación potable mensual (m³)
+    A_gris : Dict[int, float]          = {}   # Dotación gris mensual (m³)
+    f                    : Dict[Tuple[int,int], int]    = defaultdict(int)    # Frecuencia mínima
+    r_parque             : Dict[Tuple[int,int], int]    = defaultdict(int)    # Frecuencia parques
+    Vmin                 : Dict[Tuple[int,int], float]  = defaultdict(float)  # Volumen mínimo
+    c_pot  : float = 0.0    # Costo agua potable (USD/m³)
+    c_gris : float = 0.0    # Costo agua gris (USD/m³)
+    lam    : float = 0.0    # Penalización déficit (USD/m³)
+    M      : float = 0.0    # Límite hidráulico (m³/h)
+    min_tau_month : Dict[Tuple[int,int], int] = defaultdict(int)
+
+    A_pot  = {s: 0.0 for s in S}
+    A_gris = {s: 0.0 for s in S}
+    for s in S:
+        # demanda base mensual (factor estacional simple)
+        factor = 1.3 if s in (1,2,12) else 0.9 if s in (6,7) else 1.0
+        A_pot[s]  = round( sum(area[i] for i in Z)*0.007*factor/12 , 1 )
+        A_gris[s] = round( A_pot[s]*0.4 , 1 )          # 40 % potencial grises
+
+    f = defaultdict(int); r_parque = defaultdict(int); Vmin = defaultdict(float)
+    for t in [1,2,3]:
+        for s in S:
+            base_freq = 2 if s in (1,2,12) else 1
+            f[(t,s)] = base_freq
+            r_parque[(t,s)] = base_freq + 1            # un riego extra
+            # ET₀ veraniega 6 mm d⁻¹ ≈ 42 mm sem; Suponemos 20 % de reposición:
+            Vmin[(t,s)] = round( 0.0002 * base_freq , 3 )  # m³ por m²; ≈ 0.1-0.2
+
+    beta_i = {i: (5.0 if calle[i] else 0.0) for i in Z}
+
+    c_pot  = 0.45        # $/m³ tarifa 2024-25 (aguas Andinas)  [oai_citation:10‡USGS](https://pubs.water.usgs.gov/SIR20075156?utm_source=chatgpt.com)
+    c_gris = 0.12        # $/m³ costo interno de reutilización  [oai_citation:11‡Chelan PUD](https://www.chelanpud.org/conservationhome/water-conservation/water-use-calculator?utm_source=chatgpt.com)
+    lam    = 120.0       # $/m³ déficit (>> c_pot)
+
+    M = 121.5
+
+    for t in [1,2,3]:
+        for m in S:
+            minutes = [3, 6, 5]
+            if m in [1, 12]:
+                minutes = [6, 10, 5]
+            elif m in [2, 11]:
+                minutes = [5, 8, 8]
+            elif m == 3:
+                minutes = [3, 6, 7]
+            min_tau_month[(t, m)] = minutes[t-1]
+
+    return A_pot, A_gris, f, r_parque, Vmin, c_pot, c_gris, lam, M, min_tau_month
+
 if __name__=="__main__":
     # Calendario
     D, Dproh, Hn, B, W, S, sigma_d, sigma_w, W_w = build_calendar()
 
     # UGAs
     Z, calle, parque, privado, vert, gris, tau, area, beta_i = build_ugas()
+
+    # Consumo
+    A_pot, A_gris, f, r_parque, Vmin, c_pot, c_gris, lam, M, min_tau_month = build_hidro_eco()
 
     # Imprime resumen
     print("Días (D):", len(D))

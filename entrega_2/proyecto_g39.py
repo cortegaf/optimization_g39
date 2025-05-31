@@ -2,7 +2,7 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-from dataset import *
+from data1 import *
 m = gp.Model('Municipal_Riego_10_0')
 
 # ------------------------- VARIABLES ----------------------------
@@ -152,10 +152,22 @@ m.addConstrs(
 )
 
 # --------------------- FUNCIÓN OBJETIVO -------------------------
-cost_riego = c_pot * gp.quicksum(qpot.values()) + \
-             c_gris * gp.quicksum(qgris.values()) + \
-             c_pot * gp.quicksum(Qpot.values()) + \
-             c_gris * gp.quicksum(Qgris.values())
+cost_riego = c_pot * gp.quicksum(qpot[i,d,h] * min_tau_month[(tau[i], sigma_d[d])] / 60
+                                for i in Z if calle[i]==0
+                                for d in D
+                                for h in Hn) + \
+             c_gris * gp.quicksum(qgris[i,d,h] * min_tau_month[(tau[i], sigma_d[d])] / 60
+                                 for i in Z if calle[i]==0
+                                 for d in D
+                                 for h in Hn) + \
+             c_pot * gp.quicksum(Qpot[i,d,b] * min_tau_month[(tau[i], sigma_d[d])] / 60
+                                for i in Z if calle[i]==0
+                                for d in D
+                                for b in B) + \
+             c_gris * gp.quicksum(Qgris[i,d,b] * min_tau_month[(tau[i], sigma_d[d])] / 60
+                                 for i in Z if calle[i]==0
+                                 for d in D
+                                 for b in B)
 
 cost_lav = c_pot * gp.quicksum(vlav.values())
 penal_def = lam * gp.quicksum(sweek.values())
