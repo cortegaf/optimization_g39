@@ -1,0 +1,32 @@
+# -----------------------------  HORIZON  -----------------------------
+D          : 365            # nº días del año
+H          : 24             # nº horas por día
+H_noc      : [22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]   # riego permitido
+D_proh     : [3, 7]         # días sin riego (1=Lun → 3=Mié, 7=Dom)
+
+# -----------------------------  LAVADO  ------------------------------
+L_turno_km     : 18         # longitud que lava un camión en una noche
+beta_m_m3pkm   : 0.60       # m3 de agua por km
+C_cam_m3       : 20         # capacidad del estanque (m3)
+
+# -----------------------------  RIEGO  -------------------------------
+eta            : 0.85       # eficiencia de aplicación (0–1)
+M_m3ph         : 50         # Big-M (máx caudal horario, m3/h)
+
+# -----------------------------  OBJETIVO  ----------------------------
+alpha : 1000   # peso déficit de humedad
+beta  : 1      # peso volumen de riego
+gamma : 0.1    # peso activaciones de válvula
+delta : 1      # peso volumen de lavado
+
+# -------------------  HUMEDAD Y ET POR ZONA (opcional) ---------------
+# Si los umbrales o la ET varían por zona y por día,
+# declara diccionarios con la misma clave 'uga_id'.
+# 1) Umbrales de humedad:
+omega^{min}_z : 25    # mm  (puede ser un número único)
+omega^{max}_z : 85    # mm  (o un mapping {uga_id: valor})
+# 2) Evapotranspiración:
+# ET_{z,d} puede ser:
+#   - un solo número (mm/día)   → mismo valor para todas las zonas y días
+#   - o un diccionario anidado  {uga_id: {day: value, …}, …}
+ET_{z,d} : 3.0         # ← placeholder

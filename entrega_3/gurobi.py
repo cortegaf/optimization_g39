@@ -20,8 +20,8 @@ out_dir  = Path(args.out);  out_dir.mkdir(exist_ok=True)
 # ------------------------------------------------------------------
 # 2. Load dataset
 # ------------------------------------------------------------------
-ugas  = pd.read_csv(data_dir / "zonas.csv")
-pars  = yaml.safe_load(open(data_dir / "params.yaml"))
+ugas  = pd.read_csv("zonas.csv")
+pars  = yaml.safe_load(open("params.yaml"))
 
 # sets ----------------------------------------------------------------
 G = ugas.query("type=='irr'").uga_id.tolist()
@@ -30,7 +30,7 @@ P = ugas.query("uga_group=='P'").uga_id.tolist()
 N = ugas.query("uga_group=='N'").uga_id.tolist()
 
 D  = range(1, pars["D"]+1)
-H  = range(pars["H"])
+H  = range(1, pars["H"]+1)
 H_noc  = pars["H_noc"]
 D_proh = pars["D_proh"]
 
@@ -114,7 +114,7 @@ for z in G:
 for d in D:
     m.addConstr(gp.quicksum(wwash[z,d] for z in L) <= 1)
     for z in L:
-        m.addConstr(ell[z,d] <= min(beta_z[z], pars["C_cam"]) * wwash[z,d])
+        m.addConstr(ell[z,d] <= min(beta_z[z], pars["C_cam_m3"]) * wwash[z,d])
 
 # -- R8: 14-day coverage --------------------------------------------
 for z in L:
