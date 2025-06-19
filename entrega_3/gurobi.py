@@ -7,7 +7,6 @@ import argparse, yaml, pandas as pd, gurobipy as gp
 from gurobipy import GRB
 from pathlib import Path
 from construccion_et import build_ET_dict, load_irrigation_zones
-
 # ------------------------------------------------------------------
 # 1. CLI and file paths
 # ------------------------------------------------------------------
@@ -23,8 +22,8 @@ out_dir  = Path(args.out);  out_dir.mkdir(exist_ok=True)
 # ------------------------------------------------------------------
 # 2. Load dataset
 # ------------------------------------------------------------------
-ugas  = pd.read_csv("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/zonas.csv")
-pars  = yaml.safe_load(open("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/params.yaml"))
+ugas  = pd.read_csv("zonas.csv")
+pars  = yaml.safe_load(open("params.yaml"))
 
 # sets ----------------------------------------------------------------
 G = ugas.query("type=='irr'").uga_id.astype(str).tolist()
@@ -35,7 +34,11 @@ N = ugas.query("uga_group=='N'").uga_id.astype(str).tolist()
 D  = range(1, pars["D"]+1)
 H  = range(pars["H"])
 H_noc  = pars["H_noc"]
-D_proh = pars["D_proh"]
+
+daysToProhibit = pars["D_proh"]
+
+# D_proh should contain 3, 7, and all days equal to them and a multiple of 7, up to pars["D"]+1
+D_proh = [d for d in range(1, pars["D"]+1) if d % 7 == 3 or d % 7 == 0] 
 
 # parameters ----------------------------------------------------------
 # Filtrar solo zonas de riego y crear diccionario de áreas
