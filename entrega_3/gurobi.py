@@ -2,13 +2,13 @@
 # -------------------------------------------------------------
 #  Optimizacion de uso de agua en Las Condes - Modelo MILP
 # -------------------------------------------------------------
-import gurobipy as gp
-from gurobipy import GRB
-import pandas as pd
-import matplotlib.pyplot as plt
+import gurobipy as gp #type: ignore
+from gurobipy import GRB #type: ignore
+import pandas as pd #type: ignore
+import matplotlib.pyplot as plt #type: ignore
 from params_and_sets import G, L, P, N, D, H, H_noc, D_proh, A, beta_z, pars, ET_dict
-import numpy as np
-import seaborn as sns
+import numpy as np #type: ignore
+import seaborn as sns #type: ignore
 
 # -------------------------------------------------------------
 # 1. Construccion del modelo de optimizacion
@@ -100,7 +100,7 @@ m.setObjective(obj, GRB.MINIMIZE)
 # 3. Resolucion del modelo
 # -------------------------------------------------------------
 m.Params.OutputFlag = 1
-m.Params.MIPGap = 0.003  # Se detiene cuando el gap es menor o igual a 0.3%
+m.Params.TimeLimit = 1800  # Límite de tiempo: 30 minutos (1800 segundos)
 m.optimize()
 
 # -------------------------------------------------------------
