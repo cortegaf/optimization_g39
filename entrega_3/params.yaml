@@ -2,7 +2,7 @@
 D          : 365            # nº días del año
 H          : 24             # nº horas por día
 H_noc      : [22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]   # riego permitido
-D_proh     : [3, 7]         # días sin riego (1=Lun → 3=Mié, 7=Dom)
+D_proh     : [3, 7, 10, 14, 17, 21, 24, 28, 31, 35, 38, 42, 45, 49, 52, 56, 59, 63, 66, 70, 73, 77, 80, 84, 87, 91, 94, 98, 101, 105, 108, 112, 115, 119, 122, 126, 129, 133, 136, 140, 143, 147, 150, 154, 157, 161, 164, 168, 171, 175, 178, 182, 185, 189, 192, 196, 199, 203, 206, 210, 213, 217, 220, 224, 227, 231, 234, 238, 241, 245, 248, 252, 255, 259, 262, 266, 269, 273, 276, 280, 283, 287, 290, 294, 297, 301, 304, 308, 311, 315, 318, 322, 325, 329, 332, 336, 339, 343, 346, 350, 353, 357, 360, 364]         # días sin riego (1=Lun → 3=Mié, 7=Dom)
 
 # -----------------------------  LAVADO  ------------------------------
 L_turno_km     : 18         # longitud que lava un camión en una noche
@@ -11,12 +11,12 @@ C_cam_m3       : 20         # capacidad del estanque (m3)
 
 # -----------------------------  RIEGO  -------------------------------
 eta            : 0.85       # eficiencia de aplicación (0–1)
-M_m3ph         : 20         # Big-M (máx caudal horario, m3/h)
+M_m3ph         : 250         # Big-M (máx caudal horario, m3/h)
 
 # -----------------------------  OBJETIVO  ----------------------------
 alpha : 1000   # peso déficit de humedad
 beta  : 1      # peso volumen de riego
-gamma : 5    # peso activaciones de válvula
+gamma : 1    # peso activaciones de válvula
 delta : 1      # peso volumen de lavado
 
 # -------------------  HUMEDAD Y ET POR ZONA (opcional) ---------------

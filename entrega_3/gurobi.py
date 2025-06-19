@@ -171,6 +171,23 @@ ell_df = pd.DataFrame(
 ell_df.to_csv(out_csv, index=False)
 print(f"lavado solution -> {out_csv}")
 
+# ------------------------------------------------------------------
+# 5. Guardar TODAS las variables con su valor óptimo
+# ------------------------------------------------------------------
+import pandas as pd
+
+# m.getVars() devuelve una lista ordenada de todos los objetos Var.
+rows = []
+for v in m.getVars():
+    # v.VarName podría ser algo como  "I[1001,24,5]"
+    rows.append({"var": v.VarName, "value": v.X})
+
+df_vars = pd.DataFrame(rows)
+
+csv_all = out_dir / "vars_solucion_optima.csv"
+df_vars.to_csv(csv_all, index=False)
+print(f"✓ CSV completo con variables → {csv_all}")
+
 # ==============================================================
 #  POST-ANÁLISIS: volumen diario por tipo de agua (365 días)
 #  --------------------------------------------------------------
