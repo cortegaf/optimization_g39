@@ -39,4 +39,4 @@ ENV/
 # Gurobi
 *.log
 *.lp
-*.sol 
+*.sol entrega_3/results/
