@@ -11,12 +11,12 @@ C_cam_m3       : 20         # capacidad del estanque (m3)
 
 # -----------------------------  RIEGO  -------------------------------
 eta            : 0.85       # eficiencia de aplicación (0–1)
-M_m3ph         : 4500         # Big-M (máx caudal horario, m3/h)
+M_m3ph         : 20         # Big-M (máx caudal horario, m3/h)
 
 # -----------------------------  OBJETIVO  ----------------------------
 alpha : 1000   # peso déficit de humedad
 beta  : 1      # peso volumen de riego
-gamma : 0.1    # peso activaciones de válvula
+gamma : 5    # peso activaciones de válvula
 delta : 1      # peso volumen de lavado
 
 # -------------------  HUMEDAD Y ET POR ZONA (opcional) ---------------

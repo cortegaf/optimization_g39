@@ -1,0 +1,16 @@
+certifi==2025.4.26
+charset-normalizer==3.4.2
+geopandas==1.0.1
+gurobipy==10.0.3
+idna==3.10
+networkx==3.4.2
+numpy==2.2.6
+osmnx==2.0.3
+pandas==2.2.3
+pyogrio==0.11.0
+pyproj==3.7.1
+pytz==2025.2
+requests==2.32.3
+shapely==2.1.1
+tzdata==2025.2
+urllib3==2.4.0

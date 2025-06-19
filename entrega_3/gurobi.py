@@ -12,7 +12,7 @@ from construccion_et import build_ET_dict, load_irrigation_zones
 # 1. CLI and file paths
 # ------------------------------------------------------------------
 parser = argparse.ArgumentParser()
-parser.add_argument("--data", default="data", help="folder with .csv/.yaml")
+parser.add_argument("--data", default=".", help="folder with .csv/.yaml")
 parser.add_argument("--out",  default="results", help="output folder")
 parser.add_argument("--nosolve", action="store_true",
                     help="omitir optimización y cargar solution.sol si existe")
@@ -23,8 +23,8 @@ out_dir  = Path(args.out);  out_dir.mkdir(exist_ok=True)
 # ------------------------------------------------------------------
 # 2. Load dataset
 # ------------------------------------------------------------------
-ugas  = pd.read_csv("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/zonas.csv")
-pars  = yaml.safe_load(open("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/params.yaml"))
+ugas  = pd.read_csv(data_dir / "zonas.csv")
+pars  = yaml.safe_load(open(data_dir / "params.yaml"))
 
 # sets ----------------------------------------------------------------
 G = ugas.query("type=='irr'").uga_id.astype(str).tolist()
