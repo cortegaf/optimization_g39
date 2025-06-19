@@ -100,7 +100,7 @@ m.setObjective(obj, GRB.MINIMIZE)
 # 3. Resolucion del modelo
 # -------------------------------------------------------------
 m.Params.OutputFlag = 1
-m.Params.MIPGap = 0.005  # Se detiene cuando el gap es menor o igual a 0.5%
+m.Params.MIPGap = 0.003  # Se detiene cuando el gap es menor o igual a 0.3%
 m.optimize()
 
 # -------------------------------------------------------------
@@ -113,7 +113,7 @@ ell_df = pd.DataFrame(
     columns=["uga_id", "day", "ell_m3"]
 )
 ell_df.to_csv("ell_solution.csv", index=False)
-print("Solución de lavado guardada en ell_solution.csv")
+print("Solucion de lavado guardada en ell_solution.csv")
 
 # 4.2 Todas las variables optimas
 df_vars = pd.DataFrame([

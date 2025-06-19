@@ -757,8 +757,8 @@ pars = {
     'beta': 1,
     'gamma': 1,
     'delta': 1,
-    'omega^{min}_z': 25,
-    'omega^{max}_z': 85,
+    'omega^{min}_z': 75,
+    'omega^{max}_z':110,
 }
 
 # Diccionario de ET mensual 
