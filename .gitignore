@@ -41,3 +41,4 @@ ENV/
 *.lp
 *.sol entrega_3/results/
 entrega_3/results/
+/results

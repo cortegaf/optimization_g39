@@ -3,8 +3,8 @@
 #  Las Condes water MILP – stand-alone script
 #  run with:  python solve_model.py --out results/
 # ----------------------------------------------
-import argparse, yaml, pandas as pd, gurobipy as gp
-from gurobipy import GRB
+import argparse, yaml, pandas as pd, gurobipy as gp # type: ignore
+from gurobipy import GRB # type: ignore
 from pathlib import Path
 from construccion_et import build_ET_dict, load_irrigation_zones
 
@@ -174,7 +174,7 @@ print(f"lavado solution -> {out_csv}")
 # ------------------------------------------------------------------
 # 5. Guardar TODAS las variables con su valor óptimo
 # ------------------------------------------------------------------
-import pandas as pd
+import pandas as pd # type: ignore
 
 # m.getVars() devuelve una lista ordenada de todos los objetos Var.
 rows = []
@@ -195,7 +195,7 @@ print(f"✓ CSV completo con variables → {csv_all}")
 #  • pozo     : ΣzΣh vpozo[z,d,h]
 #  • lavado   : Σℓ ell[ℓ,d]
 #  ==============================================================
-import pandas as pd, matplotlib.pyplot as plt
+import pandas as pd, matplotlib.pyplot as plt # type: ignore
 
 records = []
 for d in D:                                  # D = range(1,366)
