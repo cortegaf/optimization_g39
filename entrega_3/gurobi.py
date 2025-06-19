@@ -6,6 +6,7 @@
 import argparse, yaml, pandas as pd, gurobipy as gp
 from gurobipy import GRB
 from pathlib import Path
+from construccion_et import build_ET_dict, load_irrigation_zones
 
 # ------------------------------------------------------------------
 # 1. CLI and file paths
@@ -20,23 +21,35 @@ out_dir  = Path(args.out);  out_dir.mkdir(exist_ok=True)
 # ------------------------------------------------------------------
 # 2. Load dataset
 # ------------------------------------------------------------------
-ugas  = pd.read_csv("zonas.csv")
-pars  = yaml.safe_load(open("params.yaml"))
+ugas  = pd.read_csv("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/zonas.csv")
+pars  = yaml.safe_load(open("/Users/cortegaf/Development/University/scripts/optimizacion/entrega_3/params.yaml"))
 
 # sets ----------------------------------------------------------------
-G = ugas.query("type=='irr'").uga_id.tolist()
-L = ugas.query("type=='lav'").uga_id.tolist()
-P = ugas.query("uga_group=='P'").uga_id.tolist()
-N = ugas.query("uga_group=='N'").uga_id.tolist()
+G = ugas.query("type=='irr'").uga_id.astype(str).tolist()
+L = ugas.query("type=='lav'").uga_id.astype(str).tolist()
+P = ugas.query("uga_group=='P'").uga_id.astype(str).tolist()
+N = ugas.query("uga_group=='N'").uga_id.astype(str).tolist()
 
 D  = range(1, pars["D"]+1)
-H  = range(1, pars["H"]+1)
+H  = range(pars["H"])
 H_noc  = pars["H_noc"]
 D_proh = pars["D_proh"]
 
 # parameters ----------------------------------------------------------
-A   = ugas.set_index("uga_id")["A_m2"].to_dict()
+# Filtrar solo zonas de riego y crear diccionario de áreas
+irr_ugas = ugas[ugas['type'] == 'irr'].copy()
+# Convertir uga_id a string para que coincida con G
+irr_ugas['uga_id'] = irr_ugas['uga_id'].astype(str)
+A = irr_ugas.set_index("uga_id")["A_m2"].astype(float).to_dict()
 beta_z = {z: pars["beta_m_m3pkm"] * pars["L_turno_km"] for z in L}
+
+# Cargar el diccionario ET para todas las zonas y días
+month_ET = {
+    1: 6.0, 2: 5.3, 3: 4.0, 4: 3.0,
+    5: 2.0, 6: 1.6, 7: 1.4, 8: 1.6,
+    9: 2.0, 10: 3.0, 11: 4.3, 12: 5.9,
+}
+ET_dict = build_ET_dict(G, month_ET)
 
 M      = pars["M_m3ph"]   # might be None
 alpha  = pars["alpha"]
@@ -96,11 +109,13 @@ for z in G:
 # -- R5: moisture balance -------------------------------------------
 for z in G:
     for d in D[:-1]:
+        # Usar el diccionario ET_dict para obtener ET[z,d+1]
+        et_value = ET_dict[z, d+1]  # ET para la zona z en el día d+1
         m.addConstr(
             omega[z,d+1] ==
             omega[z,d] +
             pars["eta"]*1000/A[z] * gp.quicksum(I[z,d,h] for h in H)
-            - pars["ET_{z,d}"] if False else 0  # TODO: replace by real ET
+            - et_value  # ET real desde el diccionario
             + u[z,d]
         )
 

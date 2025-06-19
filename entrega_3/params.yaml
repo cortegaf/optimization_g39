@@ -11,7 +11,7 @@ C_cam_m3       : 20         # capacidad del estanque (m3)
 
 # -----------------------------  RIEGO  -------------------------------
 eta            : 0.85       # eficiencia de aplicación (0–1)
-M_m3ph         : 50         # Big-M (máx caudal horario, m3/h)
+M_m3ph         : 4500         # Big-M (máx caudal horario, m3/h)
 
 # -----------------------------  OBJETIVO  ----------------------------
 alpha : 1000   # peso déficit de humedad
@@ -30,3 +30,4 @@ omega^{max}_z : 85    # mm  (o un mapping {uga_id: valor})
 #   - un solo número (mm/día)   → mismo valor para todas las zonas y días
 #   - o un diccionario anidado  {uga_id: {day: value, …}, …}
 ET_{z,d} : 3.0         # ← placeholder
+
