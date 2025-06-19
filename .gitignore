@@ -32,7 +32,7 @@ wheels/
 .venv
 venv/
 ENV/
-
+entrega_3/results/
 # Jupyter Notebook
 .ipynb_checkpoints
 
