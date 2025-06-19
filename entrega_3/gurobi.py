@@ -14,6 +14,8 @@ from construccion_et import build_ET_dict, load_irrigation_zones
 parser = argparse.ArgumentParser()
 parser.add_argument("--data", default="data", help="folder with .csv/.yaml")
 parser.add_argument("--out",  default="results", help="output folder")
+parser.add_argument("--nosolve", action="store_true",
+                    help="omitir optimización y cargar solution.sol si existe")
 args = parser.parse_args()
 data_dir = Path(args.data)
 out_dir  = Path(args.out);  out_dir.mkdir(exist_ok=True)
@@ -144,9 +146,21 @@ obj += delta*ell.sum() if delta is not None else 0
 m.setObjective(obj, GRB.MINIMIZE)
 
 # ------------------------------------------------------------------
-m.Params.OutputFlag = 1
-m.optimize()
-
+# 3.b  Ejecutar o cargar solución
+# ------------------------------------------------------------------
+if args.nosolve:
+    # salta el solve; intenta cargar una solución previa
+    sol_path = out_dir / "solution.sol"
+    if not sol_path.exists():
+        raise FileNotFoundError(f"No se encontró {sol_path}. Corre el script sin --nosolve primero.")
+    m.read(str(sol_path))
+    print("✓ solución previa cargada desde", sol_path)
+else:
+    m.Params.OutputFlag = 1
+    m.optimize()
+    # guarda artefactos para futuros análisis
+    m.write(str(out_dir / "model.mps"))
+    m.write(str(out_dir / "solution.sol"))
 # ------------------------------------------------------------------
 # 4. Save some outputs
 # ------------------------------------------------------------------
@@ -156,3 +170,44 @@ ell_df = pd.DataFrame(
     columns=["uga_id","day","ell_m3"])
 ell_df.to_csv(out_csv, index=False)
 print(f"lavado solution -> {out_csv}")
+
+# ==============================================================
+#  POST-ANÁLISIS: volumen diario por tipo de agua (365 días)
+#  --------------------------------------------------------------
+#  • potable  : ΣzΣh vpot[z,d,h]
+#  • pozo     : ΣzΣh vpozo[z,d,h]
+#  • lavado   : Σℓ ell[ℓ,d]
+#  ==============================================================
+import pandas as pd, matplotlib.pyplot as plt
+
+records = []
+for d in D:                                  # D = range(1,366)
+    pot  = sum(vpot[z,d,h].X  for z in G  for h in H)          # m³/d
+    pozo = sum(vpozo[z,d,h].X for z in P  for h in H)          # m³/d
+    wash = sum(ell[l,d].X     for l in L)                      # m³/d
+    records.append({"day": d, "potable": pot,
+                    "pozo": pozo, "lavado": wash})
+
+df_vol = pd.DataFrame(records).set_index("day")
+
+# -------- 1) guarda CSV ----------------------------------------
+csv_vol = out_dir / "vol_diario_por_fuente.csv"
+df_vol.to_csv(csv_vol)
+print(f"✓ CSV diario por fuente → {csv_vol}")
+
+# -------- 2) gráfico barrido apilado ---------------------------
+plt.figure(figsize=(10,4))
+df_vol.plot(kind="bar", stacked=True, width=1.0, ax=plt.gca(),
+            color={"potable":"steelblue",
+                   "pozo":"seagreen",
+                   "lavado":"darkorange"})
+plt.xlabel("Día del año (1–365)")
+plt.ylabel("Volumen [m³]")
+plt.title("Volumen diario por tipo de agua – Las Condes")
+plt.legend(title="Fuente", ncol=3, loc="upper right", fontsize=8)
+plt.tight_layout()
+
+png = out_dir / "vol_diario_por_fuente.png"
+plt.savefig(png, dpi=150)
+print(f"✓ Gráfico guardado en {png}")
+plt.show()
