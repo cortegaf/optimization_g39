@@ -300,3 +300,37 @@ plt.legend(title="Fuente", ncol=3, loc="upper right", fontsize=8)
 plt.tight_layout()
 plt.savefig("vol_diario_por_fuente.png", dpi=150)
 plt.show()
+
+# -------------------------------------------------------------
+# 8. Indicadores resumen para el informe
+# -------------------------------------------------------------
+# Máximo caudal horario observado
+max_flow = max(I[z, d, h].X for z in G for d in D for h in H)
+
+# Porcentaje de días‑UGA con déficit de humedad
+dias_def = sum(
+    omega[z, d].X <= pars['omega^{min}_z'] + 1e-3
+    for z in G for d in D
+)
+def_pct = 100 * dias_def / (len(G) * len(D))
+
+# Fracción y volumen anual de agua potable
+pot_total = df_vol['potable'].sum()          # m³ año‑1
+total_vol = df_vol[['potable', 'pozo', 'lavado']].sum().sum()
+pot_frac  = 100 * pot_total / total_vol      # %
+
+# Imprime resultados en consola
+print("\n----- Indicadores resumen -----")
+print(f"Máximo caudal horario: {max_flow:.1f} m³/h")
+print(f"Días con déficit sobre total: {def_pct:.2f} %")
+print(f"Potable anual: {pot_total/1e6:.2f} Mm³  ({pot_frac:.1f} % del total)")
+print("--------------------------------\n")
+
+# Exporta a CSV para usar en el informe
+pd.DataFrame({
+    'max_flow_m3ph':   [max_flow],
+    'dias_deficit_pct':[def_pct],
+    'potable_total_m3':[pot_total],
+    'potable_frac_pct':[pot_frac]
+}).to_csv("indicadores_resumen.csv", index=False)
+print("Indicadores resumen guardados en indicadores_resumen.csv")
